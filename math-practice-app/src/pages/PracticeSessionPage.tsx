@@ -9,6 +9,7 @@ import { saveAttempt, saveSession } from '../services/practiceStore'
 import { generateQuestionForOperations } from '../services/questionGenerator'
 import type { PracticeAttempt, PracticeConfig, PracticeSession, Question } from '../types'
 import { pickFeedback } from '../utils/feedback'
+import { playFeedbackSound } from '../utils/sound'
 import {
   buildAttempt,
   createSession,
@@ -80,6 +81,7 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     const done = isSessionComplete(updated)
     const nextSession = done ? finishSession(updated, 'completed') : updated
     setSession(nextSession)
+    if (settings.soundEffects) playFeedbackSound(selfReportedCorrect ? 'right' : 'wrong')
     if (settings.encouragingFeedback) {
       setFeedback((previous) => pickFeedback(selfReportedCorrect, previous))
     }

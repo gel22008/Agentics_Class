@@ -6,16 +6,15 @@ import PageContainer from '../components/PageContainer'
 import SessionLengthSelector from '../components/SessionLengthSelector'
 import { ROUTES } from '../routes'
 import type { DifficultyLevel, MathOperation, PracticeConfig, SessionLength } from '../types'
-import { DEFAULT_SETTINGS } from '../types'
+import { useSettings } from '../hooks/useSettings'
 
 function PracticeSetupPage() {
   const navigate = useNavigate()
+  const settings = useSettings()
   const notice = (useLocation().state as { notice?: string } | null)?.notice
-  const [operations, setOperations] = useState<MathOperation[]>(DEFAULT_SETTINGS.defaultOperations)
-  const [difficulty, setDifficulty] = useState<DifficultyLevel>(DEFAULT_SETTINGS.defaultDifficulty)
-  const [sessionLength, setSessionLength] = useState<SessionLength>(
-    DEFAULT_SETTINGS.defaultSessionLength,
-  )
+  const [operations, setOperations] = useState<MathOperation[]>(settings.defaultOperations)
+  const [difficulty, setDifficulty] = useState<DifficultyLevel>(settings.defaultDifficulty)
+  const [sessionLength, setSessionLength] = useState<SessionLength>(settings.defaultSessionLength)
 
   const canStart = operations.length > 0
 
