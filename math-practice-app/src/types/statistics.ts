@@ -48,6 +48,7 @@ export interface AppStatistics {
   byDifficulty: DifficultyStatistics
   recentSessions: SessionSummary[]
   mistakes: MistakeStatistics
-  mostMissedOperation: MathOperation | null
+  /** Every operation tied for the most mistakes (empty when there are none). */
+  mostMissedOperations: MathOperation[]
   mostMissedFacts: MissedFact[]
 }
