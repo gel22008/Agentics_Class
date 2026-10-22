@@ -432,3 +432,174 @@ a {
     animation-iteration-count: 1 !important;
   }
 }
+
+/* ---------- Practice setup ---------- */
+.btn--small {
+  min-height: 40px;
+  padding: var(--space-2) var(--space-4);
+  font-size: 0.95rem;
+}
+
+.setup-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.setup-group {
+  margin: 0;
+  padding: var(--space-5);
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.setup-group__legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.setup-group__hint {
+  color: var(--color-text-muted);
+  clear: both;
+}
+
+.setup-group > .btn {
+  align-self: flex-start;
+}
+
+.choice-grid {
+  display: grid;
+  gap: var(--space-3);
+  clear: both;
+}
+
+.choice-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.choice-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-1);
+  min-height: 7rem;
+  padding: var(--space-4) var(--space-3);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.choice-card:hover {
+  border-color: var(--color-primary);
+}
+
+.choice-card:has(input:focus-visible) {
+  outline: 4px solid var(--color-focus);
+  outline-offset: 3px;
+}
+
+.choice-card--selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.choice-card__check {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 1rem;
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.choice-card--selected .choice-card__check {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: #fff;
+}
+
+.choice-card__symbol {
+  font-size: 2.4rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.choice-card--addition .choice-card__symbol {
+  color: var(--color-add);
+}
+.choice-card--subtraction .choice-card__symbol {
+  color: var(--color-subtract);
+}
+.choice-card--multiplication .choice-card__symbol {
+  color: var(--color-multiply);
+}
+.choice-card--division .choice-card__symbol {
+  color: #c98a12;
+}
+
+.choice-card__stars {
+  color: var(--color-divide);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+
+.choice-card__big {
+  font-size: 2rem;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--color-primary-dark);
+}
+
+.choice-card__label {
+  font-weight: 800;
+}
+
+.choice-card__description {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.setup-form__footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.form-message {
+  font-weight: 700;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+}
+
+.form-message--warning {
+  background: #fff4dc;
+  color: #7a4d00;
+}
+
+@media (max-width: 760px) {
+  .choice-grid--four {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

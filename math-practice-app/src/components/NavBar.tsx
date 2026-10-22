@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 interface NavItem {
   label: string
@@ -28,9 +28,10 @@ function NavBar() {
             : pathname === item.to
           return (
             <li key={item.to}>
-              <NavLink
+              {/* Plain Link, not NavLink: NavLink overrides aria-current with its own
+                  path matching, which misses /practice/session and /practice/summary. */}
+              <Link
                 to={item.to}
-                end={!item.matchPrefix}
                 className={isActive ? 'nav__link nav__link--active' : 'nav__link'}
                 aria-current={isActive ? 'page' : undefined}
               >
@@ -38,7 +39,7 @@ function NavBar() {
                   {item.icon}
                 </span>
                 <span>{item.label}</span>
-              </NavLink>
+              </Link>
             </li>
           )
         })}
