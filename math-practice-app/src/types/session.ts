@@ -32,6 +32,8 @@ export interface PracticeSession {
   incorrectCount: number
   /** How many questions in this session were mistake-review questions. */
   reviewQuestionCount: number
+  /** Operations actually answered (review questions can include fact-family operations). */
+  operationsPracticed: MathOperation[]
 }
 
 /** One answered question. */

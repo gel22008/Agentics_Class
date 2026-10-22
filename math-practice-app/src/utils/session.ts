@@ -37,6 +37,7 @@ export function createSession(config: PracticeConfig, now = new Date()): Practic
     correctCount: 0,
     incorrectCount: 0,
     reviewQuestionCount: 0,
+    operationsPracticed: [],
   }
 }
 
@@ -51,11 +52,16 @@ export function summarizeSession(session: PracticeSession): SessionSummary {
     sessionId: session.id,
     startedAt: session.startedAt,
     completedAt: session.completedAt,
-    operations: session.config.operations,
+    // Show what was actually practiced; fall back to the chosen operations before any answers.
+    operations:
+      session.operationsPracticed?.length > 0
+        ? session.operationsPracticed
+        : session.config.operations,
     difficulty: session.config.difficulty,
     sessionLength: session.config.sessionLength,
     mode: session.config.mode,
     reviewQuestionCount: session.reviewQuestionCount,
+    status: session.status,
     attempted: session.attemptedCount,
     correct: session.correctCount,
     incorrect: session.incorrectCount,
@@ -104,6 +110,9 @@ export function recordResult(
     incorrectCount: session.incorrectCount + (selfReportedCorrect ? 0 : 1),
     reviewQuestionCount:
       session.reviewQuestionCount + (question.source === 'mistake-review' ? 1 : 0),
+    operationsPracticed: MATH_OPERATIONS.filter(
+      (op) => op === question.operation || session.operationsPracticed.includes(op),
+    ),
   }
 }
 

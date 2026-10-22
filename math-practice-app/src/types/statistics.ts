@@ -1,5 +1,5 @@
 import type { DifficultyLevel, MathOperation } from './question'
-import type { PracticeMode, SessionLength } from './session'
+import type { PracticeMode, SessionLength, SessionStatus } from './session'
 
 /** Attempted / correct / incorrect totals with accuracy as a 0–100 percentage. */
 export interface ResultTotals {
@@ -24,6 +24,8 @@ export interface SessionSummary extends ResultTotals {
   sessionLength: SessionLength
   mode: PracticeMode
   reviewQuestionCount: number
+  /** 'active' means the session was left without finishing (it is saved after every answer). */
+  status?: SessionStatus
 }
 
 export interface MistakeStatistics {

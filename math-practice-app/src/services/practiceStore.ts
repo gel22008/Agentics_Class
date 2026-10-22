@@ -1,4 +1,11 @@
-import type { AppSettings, MistakePattern, PracticeAttempt, SessionSummary } from '../types'
+import type {
+  AppSettings,
+  MistakePattern,
+  PracticeAttempt,
+  PracticeSession,
+  Question,
+  SessionSummary,
+} from '../types'
 import { DEFAULT_SETTINGS } from '../types'
 import {
   isAppSettings,
@@ -7,6 +14,7 @@ import {
   isPracticeAttempt,
   isSessionSummary,
 } from '../utils/validation'
+import { isValidPracticeConfig } from '../utils/session'
 import { readJson, removeKey, STORAGE_KEYS, writeJson } from './storage'
 
 /** Keep the newest records only so storage never grows without limit. */
@@ -63,6 +71,49 @@ export function loadMistakes(): MistakePattern[] {
 
 export function saveMistakes(patterns: MistakePattern[]): boolean {
   return writeJson(STORAGE_KEYS.mistakes, patterns)
+}
+
+// ---------- Active session (restored after a refresh) ----------
+
+export interface ActiveSessionRecord {
+  /** Router location key of the session page, so a refresh restores the same session. */
+  locationKey: string
+  session: PracticeSession
+  question: Question
+}
+
+function isActiveSessionRecord(value: unknown): value is ActiveSessionRecord {
+  if (typeof value !== 'object' || value === null) return false
+  const record = value as Record<string, unknown>
+  const session = record.session as Record<string, unknown> | undefined
+  const question = record.question as Record<string, unknown> | undefined
+  return (
+    typeof record.locationKey === 'string' &&
+    typeof session?.id === 'string' &&
+    session?.status === 'active' &&
+    typeof session?.attemptedCount === 'number' &&
+    Array.isArray(session?.operationsPracticed) &&
+    isValidPracticeConfig(session?.config) &&
+    typeof question?.id === 'string' &&
+    Array.isArray(question?.choices) &&
+    question.choices.length === 4
+  )
+}
+
+export function loadActiveSession(): ActiveSessionRecord | null {
+  return readJson<ActiveSessionRecord | null>(
+    STORAGE_KEYS.activeSession,
+    (value): value is ActiveSessionRecord | null => isActiveSessionRecord(value),
+    null,
+  )
+}
+
+export function saveActiveSession(record: ActiveSessionRecord): boolean {
+  return writeJson(STORAGE_KEYS.activeSession, record)
+}
+
+export function clearActiveSession(): void {
+  removeKey(STORAGE_KEYS.activeSession)
 }
 
 // ---------- Clearing ----------

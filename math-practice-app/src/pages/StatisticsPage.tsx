@@ -192,6 +192,8 @@ function StatisticsPage() {
                         {s.operations.map((op) => OPERATION_SYMBOLS[op]).join(' ')} ·{' '}
                         {DIFFICULTY_LABELS[s.difficulty]}
                         {s.mode === 'mistake-review' ? ' · Mistake review' : ''}
+                        {s.status === 'ended-early' ? ' · Ended early' : ''}
+                        {s.status === 'active' ? ' · Not finished' : ''}
                       </span>
                     </div>
                     <dl className="session-list__stats">

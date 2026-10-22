@@ -1,12 +1,21 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import ConfirmDialog from '../components/ConfirmDialog'
 import ProgressBar from '../components/ProgressBar'
 import QuestionCard, { type CardResult } from '../components/QuestionCard'
+import { NavigationGuardContext } from '../hooks/navigationGuard'
 import { useSettings } from '../hooks/useSettings'
 import { ROUTES } from '../routes'
 import { activePatterns, applyAttemptToMistakes, pickPatternForReview } from '../services/mistakes'
-import { loadMistakes, saveAttempt, saveMistakes, saveSession } from '../services/practiceStore'
+import {
+  clearActiveSession,
+  loadActiveSession,
+  loadMistakes,
+  saveActiveSession,
+  saveAttempt,
+  saveMistakes,
+  saveSession,
+} from '../services/practiceStore'
 import { generateSimilarQuestion } from '../services/similarQuestions'
 import { generateQuestionForOperations } from '../services/questionGenerator'
 import type { PracticeAttempt, PracticeConfig, PracticeSession, Question } from '../types'
@@ -40,12 +49,19 @@ function PracticeSessionPage() {
     )
   }
   // key: starting a new session from the same page (e.g. Practice Again) resets everything.
-  return <PracticeSessionRunner key={location.key} config={config} />
+  return <PracticeSessionRunner key={location.key} locationKey={location.key} config={config} />
 }
 
-function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
+function PracticeSessionRunner({
+  config,
+  locationKey,
+}: {
+  config: PracticeConfig
+  locationKey: string
+}) {
   const navigate = useNavigate()
   const settings = useSettings()
+  const guardRef = useContext(NavigationGuardContext)
 
   /** Next question: a similar question for a past mistake in review mode, otherwise a new one. */
   const nextQuestion = (previous?: Question): Question => {
@@ -65,8 +81,16 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     })
   }
 
-  const [session, setSession] = useState<PracticeSession>(() => createSession(config))
-  const [question, setQuestion] = useState<Question>(() => nextQuestion())
+  // After a page refresh, pick up the same session where the child left off.
+  const [restored] = useState(() => {
+    const saved = loadActiveSession()
+    return saved?.locationKey === locationKey ? saved : null
+  })
+  const [session, setSession] = useState<PracticeSession>(
+    () => restored?.session ?? createSession(config),
+  )
+  const [question, setQuestion] = useState<Question>(() => restored?.question ?? nextQuestion())
+  const [leaveTarget, setLeaveTarget] = useState<string | null>(null)
   const [feedback, setFeedback] = useState('')
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [confirmEndOpen, setConfirmEndOpen] = useState(false)
@@ -77,6 +101,26 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
 
   useEffect(() => () => window.clearTimeout(timerRef.current), [])
 
+  // Remember the active session (and the card on screen) so a refresh can restore it.
+  useEffect(() => {
+    if (session.status === 'active' && !isTransitioning) {
+      saveActiveSession({ locationKey, session, question })
+    }
+  }, [locationKey, session, question, isTransitioning])
+
+  // Ask before leaving through the app's links while a session with answers is in progress.
+  useEffect(() => {
+    if (!guardRef) return
+    guardRef.current = (to: string) => {
+      if (session.status !== 'active' || session.attemptedCount === 0) return false
+      setLeaveTarget(to)
+      return true
+    }
+    return () => {
+      guardRef.current = null
+    }
+  })
+
   const totalQuestions = config.sessionLength === 'continuous' ? null : config.sessionLength
   const delay = settings.cardAnimation ? TRANSITION_DELAY_MS : TRANSITION_DELAY_NO_ANIMATION_MS
 
@@ -84,6 +128,7 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     const summary = summarizeSession(finished)
     // Only sessions with at least one answer are worth keeping in history.
     if (summary.attempted > 0) saveSession(summary)
+    clearActiveSession()
     navigate(ROUTES.practiceSummary, { state: { summary, attempts: attemptsRef.current } })
   }
 
@@ -100,6 +145,14 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     const done = isSessionComplete(updated)
     const nextSession = done ? finishSession(updated, 'completed') : updated
     setSession(nextSession)
+    // Save the session's running totals after every answer, so history always matches the
+    // saved answers even if the child leaves, refreshes or closes the tab.
+    saveSession(summarizeSession(nextSession))
+    // Pick the next card now and remember it, so a refresh during the pause can't re-show
+    // (and double count) the card that was just answered.
+    const upcoming = done ? null : nextQuestion(question)
+    if (upcoming) saveActiveSession({ locationKey, session: nextSession, question: upcoming })
+    else clearActiveSession()
     if (settings.soundEffects) playFeedbackSound(selfReportedCorrect ? 'right' : 'wrong')
     if (settings.encouragingFeedback) {
       setFeedback((previous) => pickFeedback(selfReportedCorrect, previous))
@@ -111,7 +164,7 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
         goToSummary(nextSession)
         return
       }
-      setQuestion(nextQuestion(question))
+      if (upcoming) setQuestion(upcoming)
       setFeedback('')
       setIsTransitioning(false)
     }, delay)
@@ -126,6 +179,20 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
   }
 
   const cancelEnd = useCallback(() => setConfirmEndOpen(false), [])
+
+  const closeLeave = useCallback(() => setLeaveTarget(null), [])
+
+  /** "End session and save" from the leave prompt: finish early, save, then go where they clicked. */
+  const confirmLeave = () => {
+    if (!leaveTarget) return
+    window.clearTimeout(timerRef.current)
+    saveSession(summarizeSession(finishSession(session, 'ended-early')))
+    clearActiveSession()
+    if (guardRef) guardRef.current = null
+    const target = leaveTarget
+    setLeaveTarget(null)
+    navigate(target)
+  }
 
   const confirmEnd = () => {
     window.clearTimeout(timerRef.current)
@@ -170,6 +237,16 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
         cancelLabel="Keep Practicing"
         onConfirm={confirmEnd}
         onCancel={cancelEnd}
+      />
+
+      <ConfirmDialog
+        open={leaveTarget !== null}
+        title="Leave this practice session?"
+        message="You can end the session now and save your progress, or keep practicing to the end of this session."
+        confirmLabel="End Session and Save"
+        cancelLabel="Keep Practicing"
+        onConfirm={confirmLeave}
+        onCancel={closeLeave}
       />
     </section>
   )

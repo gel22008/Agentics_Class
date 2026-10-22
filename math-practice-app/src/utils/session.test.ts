@@ -104,3 +104,18 @@ describe('pickFeedback', () => {
     }
   })
 })
+
+describe('operations practiced', () => {
+  it('lists every operation actually answered, in a fixed order', () => {
+    let session = createSession({ ...config, mode: 'mistake-review' })
+    session = recordResult(session, buildQuestion('subtraction', 'easy', 9, 3), true)
+    session = recordResult(session, buildQuestion('addition', 'easy', 6, 3), true)
+    session = recordResult(session, buildQuestion('subtraction', 'easy', 8, 3), true)
+    expect(session.operationsPracticed).toEqual(['addition', 'subtraction'])
+    expect(summarizeSession(session).operations).toEqual(['addition', 'subtraction'])
+  })
+
+  it('falls back to the chosen operations before any answers', () => {
+    expect(summarizeSession(createSession(config)).operations).toEqual(['addition'])
+  })
+})
