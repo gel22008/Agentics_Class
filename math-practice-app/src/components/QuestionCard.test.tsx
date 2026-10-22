@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { buildQuestion } from '../services/questionGenerator'
-import QuestionCard, { RECHECK_MESSAGE } from './QuestionCard'
+import QuestionCard, { MATCHES_MESSAGE, RECHECK_MESSAGE } from './QuestionCard'
 
 // 8 × 7 with fixed choices so tests are predictable.
 const question = {
@@ -123,6 +123,20 @@ describe('QuestionCard back', () => {
     // If they still insist, let them.
     await user.click(screen.getByRole('button', { name: /I Got It Right/ }))
     expect(onResult).toHaveBeenCalledWith({ selectedAnswer: 54, selfReportedCorrect: true })
+  })
+
+  it('gently points out a correct answer reported as wrong, then accepts a second tap', async () => {
+    const { user, onResult } = renderCard()
+    await user.click(answerButton(56))
+    await user.click(screen.getByRole('button', { name: /Flip Card/ }))
+
+    await user.click(screen.getByRole('button', { name: /I Got It Wrong/ }))
+    expect(onResult).not.toHaveBeenCalled()
+    expect(screen.getByRole('alert')).toHaveTextContent(MATCHES_MESSAGE)
+    expect(screen.getByRole('alert')).toHaveTextContent(/tap it again/)
+
+    await user.click(screen.getByRole('button', { name: /I Got It Wrong/ }))
+    expect(onResult).toHaveBeenCalledWith({ selectedAnswer: 56, selfReportedCorrect: false })
   })
 
   it('records only one result per card', async () => {

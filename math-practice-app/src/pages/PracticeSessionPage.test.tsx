@@ -32,14 +32,11 @@ async function answerCard(user: ReturnType<typeof userEvent.setup>, reportRight:
   await user.click(within(front).getAllByRole('button', { name: /^Answer \d/ })[0])
   await user.click(within(front).getByRole('button', { name: /Flip Card/ }))
   const back = screen.getByRole('region', { name: 'Answer card' })
-  // Report "wrong" when needed; for "right", pick the correct answer to avoid the recheck nudge.
-  if (reportRight) {
-    await user.click(within(back).getByRole('button', { name: /I Got It Right/ }))
-    // If the first choice was wrong, the nudge appears: confirm once more.
-    const nudge = within(back).queryByRole('alert')
-    if (nudge) await user.click(within(back).getByRole('button', { name: /I Got It Right/ }))
-  } else {
-    await user.click(within(back).getByRole('button', { name: /I Got It Wrong/ }))
+  // The card may show a recheck nudge (red or green) the first time; tapping again confirms.
+  const buttonName = reportRight ? /I Got It Right/ : /I Got It Wrong/
+  await user.click(within(back).getByRole('button', { name: buttonName }))
+  if (within(back).queryByRole('alert')) {
+    await user.click(within(back).getByRole('button', { name: buttonName }))
   }
 }
 

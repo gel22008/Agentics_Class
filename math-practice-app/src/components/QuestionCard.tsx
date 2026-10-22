@@ -18,6 +18,14 @@ interface QuestionCardProps {
 }
 
 export const RECHECK_MESSAGE = 'Try to recheck if these two are the same.'
+export const MATCHES_MESSAGE =
+  'Look again: your answer matches the correct answer, so you got it right!'
+
+/**
+ * 'recheck-wrong': said "right" but the answers don't match (red).
+ * 'recheck-right': said "wrong" but the answers match (green).
+ */
+type Nudge = 'recheck-wrong' | 'recheck-right' | null
 
 const isTypingTarget = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
@@ -37,7 +45,7 @@ function QuestionCard({
 }: QuestionCardProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
   const [isCardFlipped, setIsCardFlipped] = useState(false)
-  const [showRecheck, setShowRecheck] = useState(false)
+  const [nudge, setNudge] = useState<Nudge>(null)
   const [resultSent, setResultSent] = useState(false)
   const backHeadingRef = useRef<HTMLHeadingElement>(null)
 
@@ -73,9 +81,13 @@ function QuestionCard({
 
   const report = (selfReportedCorrect: boolean) => {
     if (resultSent || selectedAnswer === null) return
-    // Gentle nudge: if the child says "right" but the answers don't match, ask once to recheck.
-    if (selfReportedCorrect && !answeredCorrectly && !showRecheck) {
-      setShowRecheck(true)
+    // Gentle nudges, shown once each: the child can always tap again to keep their choice.
+    if (selfReportedCorrect && !answeredCorrectly && nudge !== 'recheck-wrong') {
+      setNudge('recheck-wrong')
+      return
+    }
+    if (!selfReportedCorrect && answeredCorrectly && nudge !== 'recheck-right') {
+      setNudge('recheck-right')
       return
     }
     setResultSent(true)
@@ -86,7 +98,8 @@ function QuestionCard({
     'flip-card',
     animate ? 'flip-card--animated' : 'flip-card--static',
     isCardFlipped && 'flip-card--flipped',
-    showRecheck && 'flip-card--recheck',
+    nudge === 'recheck-wrong' && 'flip-card--recheck',
+    nudge === 'recheck-right' && 'flip-card--matches',
   ]
     .filter(Boolean)
     .join(' ')
@@ -149,15 +162,27 @@ function QuestionCard({
 
           <dl className="answer-compare">
             <div
-              className={`answer-compare__row${showRecheck ? ' answer-compare__row--recheck' : ''}`}
+              className={`answer-compare__row${
+                nudge === 'recheck-wrong'
+                  ? ' answer-compare__row--recheck'
+                  : nudge === 'recheck-right'
+                    ? ' answer-compare__row--matches'
+                    : ''
+              }`}
             >
               <dt>Your answer</dt>
               <dd>
                 {selectedAnswer}
-                {showRecheck && (
+                {nudge === 'recheck-wrong' && (
                   <span className="answer-compare__x" aria-hidden="true">
                     {' '}
                     ✗
+                  </span>
+                )}
+                {nudge === 'recheck-right' && (
+                  <span className="answer-compare__check" aria-hidden="true">
+                    {' '}
+                    ✅
                   </span>
                 )}
               </dd>
@@ -170,7 +195,14 @@ function QuestionCard({
 
           {showExplanation && <p className="card__explanation">{question.explanation}</p>}
 
-          {showRecheck && (
+          {nudge === 'recheck-right' && (
+            <p className="card__matches" role="alert">
+              <span aria-hidden="true">✅ </span>
+              {MATCHES_MESSAGE} If you still want to choose “I Got It Wrong”, tap it again.
+            </p>
+          )}
+
+          {nudge === 'recheck-wrong' && (
             <p className="card__recheck" role="alert">
               <span aria-hidden="true">✗ </span>
               {RECHECK_MESSAGE} If you still think you got it right, tap “I Got It Right” again.

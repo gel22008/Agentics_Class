@@ -1044,3 +1044,36 @@ a {
 .page > .form-message {
   margin-bottom: var(--space-4);
 }
+
+/* Green "you actually got it right" nudge: a soft glow, no shake (shaking reads as "no"). */
+.answer-compare__row--matches {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.card__matches {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-success-soft);
+  color: #17583b;
+  font-weight: 700;
+}
+
+.flip-card--matches .flip-card__face--back {
+  border-color: var(--color-success);
+  animation: matches-glow 1.4s ease 2;
+}
+
+@keyframes matches-glow {
+  0%,
+  100% {
+    box-shadow: var(--shadow-md);
+  }
+  50% {
+    box-shadow:
+      0 0 0 8px var(--color-success-soft),
+      0 0 24px rgba(42, 157, 106, 0.35),
+      var(--shadow-md);
+  }
+}

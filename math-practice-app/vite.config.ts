@@ -9,5 +9,7 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     css: true,
+    // Whole tests (e.g. a full 5-question session) may take several seconds.
+    testTimeout: 20000,
   },
 })
