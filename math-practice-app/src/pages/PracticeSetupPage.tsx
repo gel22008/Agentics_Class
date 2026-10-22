@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import DifficultySelector from '../components/DifficultySelector'
 import OperationSelector from '../components/OperationSelector'
 import PageContainer from '../components/PageContainer'
@@ -10,6 +10,7 @@ import { DEFAULT_SETTINGS } from '../types'
 
 function PracticeSetupPage() {
   const navigate = useNavigate()
+  const notice = (useLocation().state as { notice?: string } | null)?.notice
   const [operations, setOperations] = useState<MathOperation[]>(DEFAULT_SETTINGS.defaultOperations)
   const [difficulty, setDifficulty] = useState<DifficultyLevel>(DEFAULT_SETTINGS.defaultDifficulty)
   const [sessionLength, setSessionLength] = useState<SessionLength>(
@@ -26,6 +27,11 @@ function PracticeSetupPage() {
 
   return (
     <PageContainer title="Practice Setup" subtitle="Choose what you want to practice today.">
+      {notice && (
+        <p className="form-message form-message--warning" role="status">
+          {notice}
+        </p>
+      )}
       <form
         className="setup-form"
         onSubmit={(event) => {

@@ -603,3 +603,444 @@ a {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* ---------- Flip card ---------- */
+.flip-card {
+  max-width: 640px;
+  margin: 0 auto;
+  perspective: 1400px;
+}
+
+.flip-card__inner {
+  display: grid;
+  border-radius: var(--radius-lg);
+}
+
+.flip-card--animated .flip-card__inner {
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.flip-card--animated.flip-card--flipped .flip-card__inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card__face {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-5);
+  background: var(--color-surface);
+  border: 4px solid var(--color-primary-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  text-align: center;
+}
+
+.flip-card--animated .flip-card__face {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.flip-card--animated .flip-card__face--back {
+  transform: rotateY(180deg);
+}
+
+/* Without animation, simply show one face at a time. */
+.flip-card--static .flip-card__face--back,
+.flip-card--static.flip-card--flipped .flip-card__face--front {
+  display: none;
+}
+
+.flip-card--static.flip-card--flipped .flip-card__face--back {
+  display: flex;
+}
+
+.card__count {
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
+.card__problem {
+  font-size: clamp(2.5rem, 9vw, 4rem);
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.card__problem:focus {
+  outline: none;
+}
+
+.card__hint,
+.card__question-prompt {
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.card__explanation {
+  font-size: 1.15rem;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  width: 100%;
+}
+
+.flip-button__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* ---------- Answer choices ---------- */
+.answer-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.answer-choice {
+  position: relative;
+  min-height: 80px;
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--color-text);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.answer-choice:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.answer-choice--selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.answer-choice:disabled {
+  cursor: default;
+}
+
+.answer-choice__key {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-3);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-text-muted);
+}
+
+.answer-choice__mark {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-3);
+  font-size: 1.1rem;
+  color: var(--color-primary-dark);
+}
+
+/* ---------- Back of the card ---------- */
+.answer-compare {
+  width: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.answer-compare__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 3px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 1.2rem;
+}
+
+.answer-compare__row dt {
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.answer-compare__row dd {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 900;
+}
+
+.answer-compare__row--correct {
+  border-color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.answer-compare__row--recheck {
+  border-color: var(--color-error);
+  background: var(--color-error-soft);
+}
+
+.answer-compare__x {
+  color: var(--color-error);
+}
+
+.card__recheck {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-error-soft);
+  color: #8a2323;
+  font-weight: 700;
+}
+
+.self-report {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.self-report__btn {
+  min-width: 12rem;
+  color: #fff;
+}
+
+.self-report__btn--right {
+  background: var(--color-success);
+  box-shadow: 0 4px 0 #1f7a52;
+}
+
+.self-report__btn--wrong {
+  background: var(--color-subtract);
+  box-shadow: 0 4px 0 #cc5a3d;
+  color: #2b1208;
+}
+
+/* Gentle "recheck" nudge: red outline that flashes and a small side-to-side shake. */
+.flip-card--recheck .flip-card__face--back {
+  border-color: var(--color-error);
+  animation:
+    recheck-shake 0.45s ease,
+    recheck-flash 1.2s ease 2;
+}
+
+@keyframes recheck-shake {
+  0%,
+  100% {
+    translate: 0;
+  }
+  20% {
+    translate: -8px;
+  }
+  40% {
+    translate: 8px;
+  }
+  60% {
+    translate: -5px;
+  }
+  80% {
+    translate: 5px;
+  }
+}
+
+@keyframes recheck-flash {
+  0%,
+  100% {
+    box-shadow: var(--shadow-md);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px var(--color-error-soft),
+      var(--shadow-md);
+  }
+}
+
+/* ---------- Practice session ---------- */
+.session {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.session__top {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+}
+
+.session__top .progress {
+  flex: 1;
+}
+
+.progress__label {
+  font-weight: 800;
+  margin-bottom: var(--space-2);
+}
+
+.progress__track {
+  height: 16px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  overflow: hidden;
+}
+
+.progress__fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.session__feedback {
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 3rem;
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+}
+
+.session__feedback:empty {
+  visibility: hidden;
+}
+
+/* ---------- Confirmation dialog ---------- */
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: var(--space-4);
+  background: rgba(31, 42, 68, 0.45);
+}
+
+.dialog {
+  width: 100%;
+  max-width: 460px;
+  padding: var(--space-6) var(--space-5);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dialog__title {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+/* ---------- Summary ---------- */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.stat-tile {
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.stat-tile__value {
+  display: block;
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.stat-tile__label {
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.stat-tile--correct .stat-tile__value {
+  color: var(--color-success);
+}
+
+.stat-tile--incorrect .stat-tile__value {
+  color: var(--color-error);
+}
+
+.details-list {
+  margin: var(--space-5) 0 0;
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-5);
+}
+
+.details-list dt {
+  font-weight: 800;
+}
+
+.details-list dd {
+  margin: 0;
+}
+
+.disabled-reason {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+
+.action-with-reason {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+@media (max-width: 640px) {
+  .answer-choice {
+    min-height: 68px;
+    font-size: 1.7rem;
+  }
+
+  .flip-card__face {
+    padding: var(--space-5) var(--space-3);
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .session__top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .self-report__btn {
+    width: 100%;
+  }
+}
+
+.page > .form-message {
+  margin-bottom: var(--space-4);
+}
