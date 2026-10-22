@@ -692,7 +692,7 @@ Initial routes:
 
 - [x] Save the active session.
 - [x] Save the current question.
-- [x] Save the selected answer when appropriate.
+- [ ] Save the selected answer when appropriate.
 - [x] Restore the session after a page refresh.
 - [x] Clear restored state when the session ends.
 

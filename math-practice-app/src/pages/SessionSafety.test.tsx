@@ -77,6 +77,8 @@ describe('session safety', () => {
     await user.click(within(nav).getByRole('link', { name: /Home/ }))
     expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { level: 1, name: /math star/i })).toBeInTheDocument()
+    // Leaving before any answer must not create an empty 0-attempt session.
+    expect(loadSessions()).toEqual([])
   })
 
   it('restores the session after a page refresh', async () => {
