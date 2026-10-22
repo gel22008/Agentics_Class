@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
-import { loadAttempts, loadSessions } from '../services/practiceStore'
+import { loadAttempts, loadMistakes, loadSessions } from '../services/practiceStore'
 import type { PracticeConfig } from '../types'
 import PracticeSessionPage from './PracticeSessionPage'
 import PracticeSetupPage from './PracticeSetupPage'
@@ -91,7 +91,9 @@ describe('PracticeSessionPage', () => {
     expect(tile('Incorrect')).toHaveTextContent('2')
     expect(tile('Accuracy')).toHaveTextContent('60%')
     expect(screen.getByText('Addition, Division')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Practice Mistakes' })).toBeDisabled()
+    // Two wrong answers created mistake patterns, so mistake review is now available.
+    expect(screen.getByRole('button', { name: /Practice Mistakes \(\d\)/ })).toBeEnabled()
+    expect(loadMistakes().length).toBeGreaterThanOrEqual(1)
 
     // Everything was saved to local storage, so it survives a refresh.
     expect(loadAttempts()).toHaveLength(5)

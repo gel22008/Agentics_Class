@@ -1,8 +1,11 @@
 import type {
+  DifficultyLevel,
+  MistakePattern,
   PracticeAttempt,
   PracticeConfig,
   PracticeSession,
   Question,
+  SessionLength,
   SessionSummary,
 } from '../types'
 import { DIFFICULTY_LEVELS, MATH_OPERATIONS, SESSION_LENGTHS } from '../types'
@@ -110,4 +113,22 @@ export function finishSession(
   now = new Date(),
 ): PracticeSession {
   return { ...session, status, completedAt: now.toISOString() }
+}
+
+/** Config for a mistake-review session built from the active mistake patterns. */
+export function createMistakeReviewConfig(
+  active: readonly MistakePattern[],
+  sessionLength: SessionLength = 10,
+): PracticeConfig {
+  const operations = MATH_OPERATIONS.filter((op) => active.some((p) => p.operation === op))
+  const counts = new Map<DifficultyLevel, number>()
+  for (const p of active) counts.set(p.difficulty, (counts.get(p.difficulty) ?? 0) + 1)
+  const difficulty =
+    [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? DIFFICULTY_LEVELS[0]
+  return {
+    operations: operations.length > 0 ? operations : ['addition'],
+    difficulty,
+    sessionLength,
+    mode: 'mistake-review',
+  }
 }

@@ -1,6 +1,12 @@
-import type { AppSettings, PracticeAttempt, SessionSummary } from '../types'
+import type { AppSettings, MistakePattern, PracticeAttempt, SessionSummary } from '../types'
 import { DEFAULT_SETTINGS } from '../types'
-import { isAppSettings, isArrayOf, isPracticeAttempt, isSessionSummary } from '../utils/validation'
+import {
+  isAppSettings,
+  isArrayOf,
+  isMistakePattern,
+  isPracticeAttempt,
+  isSessionSummary,
+} from '../utils/validation'
 import { readJson, removeKey, STORAGE_KEYS, writeJson } from './storage'
 
 /** Keep the newest records only so storage never grows without limit. */
@@ -9,6 +15,7 @@ export const MAX_STORED_ATTEMPTS = 5000
 
 const isSessionList = isArrayOf(isSessionSummary)
 const isAttemptList = isArrayOf(isPracticeAttempt)
+const isMistakeList = isArrayOf(isMistakePattern)
 
 // ---------- Settings ----------
 
@@ -46,6 +53,16 @@ export function saveAttempt(attempt: PracticeAttempt): boolean {
   if (existing.some((a) => a.id === attempt.id)) return true // never store duplicates
   const next = [...existing, attempt].slice(-MAX_STORED_ATTEMPTS)
   return writeJson(STORAGE_KEYS.attempts, next)
+}
+
+// ---------- Mistake patterns ----------
+
+export function loadMistakes(): MistakePattern[] {
+  return readJson(STORAGE_KEYS.mistakes, isMistakeList, [])
+}
+
+export function saveMistakes(patterns: MistakePattern[]): boolean {
+  return writeJson(STORAGE_KEYS.mistakes, patterns)
 }
 
 // ---------- Clearing ----------

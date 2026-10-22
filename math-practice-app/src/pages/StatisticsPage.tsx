@@ -1,10 +1,18 @@
 import { useCallback, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ConfirmDialog from '../components/ConfirmDialog'
+import MistakeDetails from '../components/MistakeDetails'
 import PageContainer from '../components/PageContainer'
+import PracticeMistakesButton from '../components/PracticeMistakesButton'
 import ResultTotalsCard from '../components/ResultTotalsCard'
 import { ROUTES } from '../routes'
-import { clearStatistics, loadAttempts, loadSessions } from '../services/practiceStore'
+import { useSettings } from '../hooks/useSettings'
+import {
+  clearStatistics,
+  loadAttempts,
+  loadMistakes,
+  loadSessions,
+} from '../services/practiceStore'
 import { calculateStatistics } from '../services/statistics'
 import {
   DIFFICULTY_LABELS,
@@ -31,19 +39,15 @@ function StatisticsPage() {
   const [version, setVersion] = useState(0)
   const [confirmResetOpen, setConfirmResetOpen] = useState(false)
 
-  const stats = useMemo(() => {
+  const settings = useSettings()
+  const { stats, mistakes } = useMemo(() => {
     void version
-    return calculateStatistics(loadAttempts(), loadSessions())
+    const mistakes = loadMistakes()
+    return { stats: calculateStatistics(loadAttempts(), loadSessions(), mistakes), mistakes }
   }, [version])
 
   const hasPracticed = stats.overall.attempted > 0
   const hasMistakes = stats.overall.incorrect > 0
-  const mistakesDisabledReason = !hasPracticed
-    ? "Disabled because you haven't started yet."
-    : !hasMistakes
-      ? 'Disabled because you have no mistakes to review!'
-      : 'Mistake review is coming soon.'
-
   const closeReset = useCallback(() => setConfirmResetOpen(false), [])
   const confirmReset = () => {
     clearStatistics()
@@ -131,6 +135,13 @@ function StatisticsPage() {
             )}
           </section>
 
+          <MistakeDetails
+            mistakes={mistakes}
+            stats={stats.mistakes}
+            masteryThreshold={settings.masteryThreshold}
+            formatDate={formatDate}
+          />
+
           {/* ---------- By Operation ---------- */}
           <section className="stats-section" aria-labelledby="by-operation-title">
             <h2 id="by-operation-title" className="stats-section__title">
@@ -216,19 +227,7 @@ function StatisticsPage() {
         <Link to={ROUTES.practiceSetup} className="btn btn--primary">
           Practice Again
         </Link>
-        <div className="action-with-reason">
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled
-            aria-describedby="stats-mistakes-reason"
-          >
-            Practice Mistakes
-          </button>
-          <span id="stats-mistakes-reason" className="disabled-reason">
-            {mistakesDisabledReason}
-          </span>
-        </div>
+        <PracticeMistakesButton key={version} />
         <div className="action-with-reason">
           <button
             type="button"

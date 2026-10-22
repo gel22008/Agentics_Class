@@ -5,7 +5,9 @@ import ProgressBar from '../components/ProgressBar'
 import QuestionCard, { type CardResult } from '../components/QuestionCard'
 import { useSettings } from '../hooks/useSettings'
 import { ROUTES } from '../routes'
-import { saveAttempt, saveSession } from '../services/practiceStore'
+import { activePatterns, applyAttemptToMistakes, pickPatternForReview } from '../services/mistakes'
+import { loadMistakes, saveAttempt, saveMistakes, saveSession } from '../services/practiceStore'
+import { generateSimilarQuestion } from '../services/similarQuestions'
 import { generateQuestionForOperations } from '../services/questionGenerator'
 import type { PracticeAttempt, PracticeConfig, PracticeSession, Question } from '../types'
 import { pickFeedback } from '../utils/feedback'
@@ -45,10 +47,26 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
   const navigate = useNavigate()
   const settings = useSettings()
 
+  /** Next question: a similar question for a past mistake in review mode, otherwise a new one. */
+  const nextQuestion = (previous?: Question): Question => {
+    if (config.mode === 'mistake-review') {
+      const patterns = loadMistakes()
+      const active = activePatterns(patterns)
+      // If everything got mastered mid-session, keep reviewing the same facts until the end.
+      const pool = active.length > 0 ? active : patterns
+      const pattern = pickPatternForReview(pool, settings.masteryThreshold, {
+        avoidId: previous?.mistakePatternId,
+      })
+      if (pattern)
+        return generateSimilarQuestion(pattern, { avoidPatternKey: previous?.patternKey })
+    }
+    return generateQuestionForOperations(config.operations, config.difficulty, {
+      avoidPatternKey: previous?.patternKey,
+    })
+  }
+
   const [session, setSession] = useState<PracticeSession>(() => createSession(config))
-  const [question, setQuestion] = useState<Question>(() =>
-    generateQuestionForOperations(config.operations, config.difficulty),
-  )
+  const [question, setQuestion] = useState<Question>(() => nextQuestion())
   const [feedback, setFeedback] = useState('')
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [confirmEndOpen, setConfirmEndOpen] = useState(false)
@@ -77,6 +95,7 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     const attempt = buildAttempt(session, question, selectedAnswer, selfReportedCorrect)
     attemptsRef.current = [...attemptsRef.current, attempt]
     saveAttempt(attempt)
+    saveMistakes(applyAttemptToMistakes(loadMistakes(), attempt, settings.masteryThreshold))
     const updated = recordResult(session, question, selfReportedCorrect)
     const done = isSessionComplete(updated)
     const nextSession = done ? finishSession(updated, 'completed') : updated
@@ -92,11 +111,7 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
         goToSummary(nextSession)
         return
       }
-      setQuestion(
-        generateQuestionForOperations(config.operations, config.difficulty, {
-          avoidPatternKey: question.patternKey,
-        }),
-      )
+      setQuestion(nextQuestion(question))
       setFeedback('')
       setIsTransitioning(false)
     }, delay)

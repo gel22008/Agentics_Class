@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import PageContainer from '../components/PageContainer'
+import PracticeMistakesButton from '../components/PracticeMistakesButton'
 import { ROUTES } from '../routes'
 import type { PracticeConfig, SessionSummary } from '../types'
 import { DIFFICULTY_LABELS, OPERATION_LABELS } from '../types'
@@ -48,12 +49,6 @@ function PracticeSummaryPage() {
     navigate(ROUTES.practiceSession, { state: { config } })
   }
 
-  // Mistake review arrives in Phase 14; until then explain why the button is disabled.
-  const mistakesDisabledReason =
-    summary.incorrect === 0
-      ? 'Disabled because you have no mistakes to review!'
-      : 'Mistake review is coming soon.'
-
   return (
     <PageContainer
       title={headline(summary)}
@@ -93,19 +88,7 @@ function PracticeSummaryPage() {
         <button type="button" className="btn btn--primary" onClick={practiceAgain}>
           Practice Again
         </button>
-        <div className="action-with-reason">
-          <button
-            type="button"
-            className="btn btn--secondary"
-            disabled
-            aria-describedby="mistakes-disabled-reason"
-          >
-            Practice Mistakes
-          </button>
-          <span id="mistakes-disabled-reason" className="disabled-reason">
-            {mistakesDisabledReason}
-          </span>
-        </div>
+        <PracticeMistakesButton />
         <Link to={ROUTES.practiceSetup} className="btn btn--secondary">
           Change Settings
         </Link>

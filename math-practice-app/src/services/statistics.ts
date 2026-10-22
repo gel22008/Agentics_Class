@@ -4,6 +4,7 @@ import type {
   DifficultyStatistics,
   MathOperation,
   MissedFact,
+  MistakePattern,
   OperationStatistics,
   PracticeAttempt,
   ResultTotals,
@@ -99,7 +100,9 @@ export function mostMissedFacts(
 export function calculateStatistics(
   attempts: readonly PracticeAttempt[],
   sessions: readonly SessionSummary[],
+  mistakes: readonly MistakePattern[] = [],
 ): AppStatistics {
+  const reviewAttempts = attempts.filter((a) => a.source === 'mistake-review')
   const missed = mostMissedOperations(attempts)
   return {
     overall: totalsFor(attempts),
@@ -109,10 +112,10 @@ export function calculateStatistics(
       .sort((a, b) => b.startedAt.localeCompare(a.startedAt))
       .slice(0, RECENT_SESSION_LIMIT),
     mistakes: {
-      activeCount: 0,
-      masteredCount: 0,
-      similarQuestionsPracticed: 0,
-      similarQuestionsCorrect: 0,
+      activeCount: mistakes.filter((m) => m.status === 'active').length,
+      masteredCount: mistakes.filter((m) => m.status === 'mastered').length,
+      similarQuestionsPracticed: reviewAttempts.length,
+      similarQuestionsCorrect: reviewAttempts.filter((a) => a.selfReportedCorrect).length,
     },
     mostMissedOperations: missed,
     mostMissedFacts: mostMissedFacts(attempts),

@@ -1,4 +1,4 @@
-import type { AppSettings, PracticeAttempt, SessionSummary } from '../types'
+import type { AppSettings, MistakePattern, PracticeAttempt, SessionSummary } from '../types'
 import {
   DIFFICULTY_LEVELS,
   MATH_OPERATIONS,
@@ -72,3 +72,22 @@ export const isArrayOf =
   <T>(isItem: (value: unknown) => value is T) =>
   (value: unknown): value is T[] =>
     Array.isArray(value) && value.every(isItem)
+
+export function isMistakePattern(value: unknown): value is MistakePattern {
+  if (!isObject(value)) return false
+  return (
+    isString(value.id) &&
+    isString(value.patternKey) &&
+    isOperation(value.operation) &&
+    isDifficulty(value.difficulty) &&
+    isNumber(value.operandA) &&
+    isNumber(value.operandB) &&
+    isNumber(value.correctAnswer) &&
+    isNumber(value.incorrectCount) &&
+    isNumber(value.similarCorrectCount) &&
+    isNumber(value.similarPracticedCount) &&
+    (value.status === 'active' || value.status === 'mastered') &&
+    isString(value.firstIncorrectAt) &&
+    isString(value.lastIncorrectAt)
+  )
+}
