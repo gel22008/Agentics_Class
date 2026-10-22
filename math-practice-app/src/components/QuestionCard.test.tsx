@@ -67,6 +67,58 @@ describe('QuestionCard front', () => {
   })
 })
 
+describe('QuestionCard keyboard and screen readers', () => {
+  it('ignores number keys while typing in a form input', async () => {
+    const onResult = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <>
+        <input aria-label="Notes" />
+        <QuestionCard
+          question={question}
+          questionNumber={1}
+          totalQuestions={5}
+          animate={false}
+          showExplanation
+          onResult={onResult}
+        />
+      </>,
+    )
+    await user.click(screen.getByRole('textbox', { name: 'Notes' }))
+    await user.keyboard('2')
+    expect(screen.getByRole('textbox', { name: 'Notes' })).toHaveValue('2')
+    expect(answerButton(56)).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('ignores number keys while a dialog is open', async () => {
+    const user = userEvent.setup()
+    render(
+      <>
+        <div role="alertdialog" aria-modal="true" aria-label="Test dialog" />
+        <QuestionCard
+          question={question}
+          questionNumber={1}
+          totalQuestions={5}
+          animate={false}
+          showExplanation
+          onResult={vi.fn()}
+        />
+      </>,
+    )
+    await user.keyboard('2')
+    expect(answerButton(56)).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('announces the question, then the revealed answer', async () => {
+    const { user } = renderCard()
+    const live = document.querySelector('[aria-live="polite"]')
+    expect(live).toHaveTextContent('Question 3 of 10: 8 × 7')
+    await user.click(answerButton(54))
+    await user.click(screen.getByRole('button', { name: /Flip Card/ }))
+    expect(live).toHaveTextContent('The correct answer is 56. You chose 54.')
+  })
+})
+
 describe('QuestionCard back', () => {
   it('reveals the correct answer, the chosen answer and the explanation after flipping', async () => {
     const { user } = renderCard()

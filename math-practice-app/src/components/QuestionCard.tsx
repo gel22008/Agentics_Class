@@ -31,6 +31,9 @@ const isTypingTarget = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
   (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
 
+/** Shortcuts must not change the answer hidden behind an open dialog. */
+const isDialogOpen = () => document.querySelector('[aria-modal="true"]') !== null
+
 /**
  * A flashcard: pick an answer on the front, flip it, then say whether you got it right.
  * The parent should give it key={question.id} so all state resets for each new question.
@@ -59,7 +62,14 @@ function QuestionCard({
   useEffect(() => {
     if (isCardFlipped) return
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.altKey || event.ctrlKey || event.metaKey || isTypingTarget(event.target)) return
+      if (
+        event.altKey ||
+        event.ctrlKey ||
+        event.metaKey ||
+        isTypingTarget(event.target) ||
+        isDialogOpen()
+      )
+        return
       const index = Number(event.key) - 1
       if (Number.isInteger(index) && index >= 0 && index < question.choices.length) {
         event.preventDefault()
@@ -104,8 +114,16 @@ function QuestionCard({
     .filter(Boolean)
     .join(' ')
 
+  // Read aloud by screen readers: the new question, then the revealed answer after flipping.
+  const announcement = isCardFlipped
+    ? `The correct answer is ${question.correctAnswer}. You chose ${selectedAnswer}.`
+    : `${progressLabel}: ${question.displayText}`
+
   return (
     <div className={cardClasses}>
+      <p className="visually-hidden" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </p>
       <div className="flip-card__inner">
         {/* ---------- Front ---------- */}
         <section

@@ -21,14 +21,19 @@ function PracticeSummaryPage() {
   const summary = (location.state as { summary?: unknown } | null)?.summary
 
   if (!isSessionSummary(summary)) {
+    // Opened without session data (e.g. a typed URL or a new tab). Results are already saved,
+    // so point the child to Statistics instead of showing a blank page.
     return (
       <PageContainer
-        title="No session to show"
-        subtitle="Finish a practice session to see your summary here."
+        title="This session is finished 🎉"
+        subtitle="Your results are saved. You can see them on your Statistics page."
         width="narrow"
       >
         <div className="page__actions">
-          <Link to={ROUTES.practiceSetup} className="btn btn--primary">
+          <Link to={ROUTES.statistics} className="btn btn--primary">
+            See My Statistics
+          </Link>
+          <Link to={ROUTES.practiceSetup} className="btn btn--secondary">
             Start Practice
           </Link>
           <Link to={ROUTES.home} className="btn btn--secondary">

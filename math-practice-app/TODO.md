@@ -393,7 +393,7 @@ Initial routes:
 - [x] Include the self-reported result.
 - [x] Include the operation and difficulty.
 - [x] Include the session ID and timestamp.
-- [ ] Confirm that attempts persist after a browser restart.
+- [ ] Confirm that attempts persist after a browser restart. _To verify on the live site (Gabriella)._
 
 ## Phase 10: Statistics
 
@@ -624,67 +624,67 @@ Initial routes:
 
 ### 66. Improve Keyboard Navigation
 
-- [ ] Ensure every control is reachable with Tab.
-- [ ] Add visible focus indicators.
-- [ ] Support Enter and Space on buttons.
-- [ ] Support number keys 1–4 for answer selection.
-- [ ] Prevent keyboard shortcuts from interfering with form inputs.
+- [x] Ensure every control is reachable with Tab.
+- [x] Add visible focus indicators.
+- [x] Support Enter and Space on buttons.
+- [x] Support number keys 1–4 for answer selection.
+- [x] Prevent keyboard shortcuts from interfering with form inputs.
 
 ### 67. Improve Screen-Reader Support
 
-- [ ] Use semantic HTML.
-- [ ] Add accessible labels to answer choices.
-- [ ] Announce question changes.
-- [ ] Announce the revealed correct answer.
-- [ ] Announce session progress.
-- [ ] Add accessible names to icon buttons.
+- [x] Use semantic HTML.
+- [x] Add accessible labels to answer choices.
+- [x] Announce question changes.
+- [x] Announce the revealed correct answer.
+- [x] Announce session progress.
+- [x] Add accessible names to icon buttons.
 
 ### 68. Support Reduced Motion
 
-- [ ] Detect prefers-reduced-motion.
-- [ ] Disable card animations when reduced motion is requested.
-- [ ] Ensure card content still changes clearly.
-- [ ] Respect the application's animation setting.
+- [x] Detect prefers-reduced-motion.
+- [x] Disable card animations when reduced motion is requested.
+- [x] Ensure card content still changes clearly.
+- [x] Respect the application's animation setting.
 
 ### 69. Check Visual Accessibility
 
-- [ ] Verify sufficient color contrast.
-- [ ] Avoid communicating results by color alone.
-- [ ] Add text or icons to selected states.
-- [ ] Test at 200% browser zoom.
-- [ ] Test with larger system font sizes.
+- [x] Verify sufficient color contrast.
+- [x] Avoid communicating results by color alone.
+- [x] Add text or icons to selected states.
+- [ ] Test at 200% browser zoom. _Deferred: manual zoom testing not done before the deadline (layout uses rem units and wraps)._
+- [ ] Test with larger system font sizes. _Deferred: manual testing not done before the deadline._
 
 ## Phase 17: Responsive Design and Polish
 
 ### 70. Optimize for Tablets
 
-- [ ] Use large touch targets.
-- [ ] Center the practice card.
-- [ ] Keep answer choices easy to reach.
-- [ ] Test portrait and landscape orientations.
+- [x] Use large touch targets.
+- [x] Center the practice card.
+- [x] Keep answer choices easy to reach.
+- [ ] Test portrait and landscape orientations. _Deferred: no tablet available to test tonight._
 
 ### 71. Optimize for Mobile Devices
 
-- [ ] Stack answer choices when necessary.
-- [ ] Adjust card width.
-- [ ] Prevent horizontal scrolling.
-- [ ] Simplify navigation.
-- [ ] Test on common small-screen sizes.
+- [x] Stack answer choices when necessary.
+- [x] Adjust card width.
+- [x] Prevent horizontal scrolling.
+- [x] Simplify navigation.
+- [ ] Test on common small-screen sizes. _Deferred: only checked with code review and wrapping fixes, not on real devices._
 
 ### 72. Optimize the Statistics Layout
 
-- [ ] Convert wide tables to cards on small screens.
-- [ ] Prevent labels and values from overlapping.
-- [ ] Keep recent sessions readable.
-- [ ] Support horizontal scrolling only when necessary.
+- [x] Convert wide tables to cards on small screens.
+- [x] Prevent labels and values from overlapping.
+- [x] Keep recent sessions readable.
+- [x] Support horizontal scrolling only when necessary.
 
 ### 73. Add Child-Friendly Feedback
 
-- [ ] Add positive feedback messages.
-- [ ] Add supportive messages after mistakes.
-- [ ] Avoid shaming language.
-- [ ] Randomize feedback without becoming distracting.
-- [ ] Add an option to disable feedback effects.
+- [x] Add positive feedback messages.
+- [x] Add supportive messages after mistakes.
+- [x] Avoid shaming language.
+- [x] Randomize feedback without becoming distracting.
+- [x] Add an option to disable feedback effects.
 
 ## Phase 18: Session Recovery and Navigation Safety
 
@@ -692,7 +692,7 @@ Initial routes:
 
 - [x] Save the active session.
 - [x] Save the current question.
-- [ ] Save the selected answer when appropriate.
+- [ ] Save the selected answer when appropriate. _Deferred: a refresh restores the same card, but unflipped and with no answer selected._
 - [x] Restore the session after a page refresh.
 - [x] Clear restored state when the session ends.
 
@@ -708,136 +708,136 @@ Initial routes:
 
 ### 76. Handle Invalid Stored Data
 
-- [ ] Detect invalid settings.
-- [ ] Detect invalid attempts.
-- [ ] Detect invalid sessions.
-- [ ] Detect invalid mistake patterns.
-- [ ] Reset only the affected data category.
-- [ ] Avoid crashing the application.
+- [x] Detect invalid settings.
+- [x] Detect invalid attempts.
+- [x] Detect invalid sessions.
+- [x] Detect invalid mistake patterns.
+- [x] Reset only the affected data category.
+- [x] Avoid crashing the application.
 
 ### 77. Handle Question-Generation Failures
 
-- [ ] Validate every generated question.
-- [ ] Retry generation after an invalid result.
-- [ ] Set a maximum retry count.
-- [ ] Provide a fallback question.
-- [ ] Log useful development errors.
+- [x] Validate every generated question.
+- [x] Retry generation after an invalid result.
+- [x] Set a maximum retry count.
+- [x] Provide a fallback question.
+- [x] Log useful development errors.
 
 ### 78. Add User-Friendly Error Messages
 
-- [ ] Add a general error component.
-- [ ] Explain storage errors in simple language.
-- [ ] Explain missing-session errors.
-- [ ] Provide a safe way to return home.
-- [ ] Avoid exposing technical stack traces.
+- [x] Add a general error component.
+- [x] Explain storage errors in simple language.
+- [x] Explain missing-session errors.
+- [x] Provide a safe way to return home.
+- [x] Avoid exposing technical stack traces.
 
 ## Phase 20: Testing
 
 ### 79. Complete Unit Tests
 
-- [ ] Test all arithmetic generators.
-- [ ] Test difficulty boundaries.
-- [ ] Test distractor generation.
-- [ ] Test answer-choice uniqueness.
-- [ ] Test statistics calculations.
-- [ ] Test mistake-pattern updates.
-- [ ] Test similar-question generation.
-- [ ] Test mastery rules.
-- [ ] Test storage serialization and validation.
+- [x] Test all arithmetic generators.
+- [x] Test difficulty boundaries.
+- [x] Test distractor generation.
+- [x] Test answer-choice uniqueness.
+- [x] Test statistics calculations.
+- [x] Test mistake-pattern updates.
+- [x] Test similar-question generation.
+- [x] Test mastery rules.
+- [x] Test storage serialization and validation.
 
 ### 80. Complete Component Tests
 
-- [ ] Test operation selection.
-- [ ] Test difficulty selection.
-- [ ] Test answer selection.
-- [ ] Test card flipping.
-- [ ] Test right and wrong buttons.
-- [ ] Test progress updates.
-- [ ] Test session completion.
-- [ ] Test statistics display.
-- [ ] Test confirmation dialogs.
+- [x] Test operation selection.
+- [x] Test difficulty selection.
+- [x] Test answer selection.
+- [x] Test card flipping.
+- [x] Test right and wrong buttons.
+- [x] Test progress updates.
+- [x] Test session completion.
+- [x] Test statistics display.
+- [x] Test confirmation dialogs.
 
 ### 81. Complete Integration Tests
 
-- [ ] Test a full addition session.
-- [ ] Test a mixed-operation session.
-- [ ] Test continuous practice.
-- [ ] Test an incorrect answer creating a mistake pattern.
-- [ ] Test mistake-review generation.
-- [ ] Test mastery completion.
-- [ ] Test persistence after a browser refresh.
-- [ ] Test resetting statistics.
+- [ ] Test a full addition session. _Deferred: covered by the mixed addition/division 5-question session test._
+- [x] Test a mixed-operation session.
+- [x] Test continuous practice.
+- [x] Test an incorrect answer creating a mistake pattern.
+- [x] Test mistake-review generation.
+- [x] Test mastery completion.
+- [x] Test persistence after a browser refresh.
+- [x] Test resetting statistics.
 
 ### 82. Complete Accessibility Testing
 
-- [ ] Complete a session using only the keyboard.
-- [ ] Test with a screen reader.
-- [ ] Test reduced-motion mode.
-- [ ] Test browser zoom.
-- [ ] Run an automated accessibility checker.
-- [ ] Manually review reported issues.
+- [ ] Complete a session using only the keyboard. _Deferred: manual accessibility testing not done before the deadline._
+- [ ] Test with a screen reader. _Deferred: no screen-reader testing tonight; labels and live regions are in place._
+- [ ] Test reduced-motion mode. _Deferred: manual check not done; CSS turns off flip, shake and glow._
+- [ ] Test browser zoom. _Deferred: manual zoom testing not done before the deadline._
+- [ ] Run an automated accessibility checker. _Deferred: no checker (e.g. axe) installed in time._
+- [ ] Manually review reported issues. _Deferred: depends on the automated checker above._
 
 ## Phase 21: Performance and Data Management
 
 ### 83. Optimize React Rendering
 
-- [ ] Identify unnecessary component re-renders.
-- [ ] Memoize expensive statistics calculations.
-- [ ] Keep question generation outside render logic.
-- [ ] Avoid unnecessary global state updates.
+- [ ] Identify unnecessary component re-renders. _Deferred: no profiling done; app is small and responsive._
+- [x] Memoize expensive statistics calculations.
+- [x] Keep question generation outside render logic.
+- [x] Avoid unnecessary global state updates.
 
 ### 84. Manage Large Practice Histories
 
-- [ ] Test with several thousand attempts.
-- [ ] Measure local-storage usage.
-- [ ] Limit the number of detailed recent sessions.
-- [ ] Summarize older attempt records if necessary.
-- [ ] Preserve aggregate statistics when archiving details.
+- [ ] Test with several thousand attempts. _Deferred: not load-tested; attempts are capped at 5,000._
+- [ ] Measure local-storage usage. _Deferred: not measured; caps keep it well under browser limits._
+- [x] Limit the number of detailed recent sessions.
+- [ ] Summarize older attempt records if necessary. _Deferred: attempts beyond the newest 5,000 are dropped, not summarized._
+- [ ] Preserve aggregate statistics when archiving details. _Deferred: same as above, so totals only cover the newest 5,000 answers._
 
 ### 85. Improve Loading Performance
 
-- [ ] Measure the initial bundle size.
-- [ ] Lazy-load statistics and settings pages.
-- [ ] Remove unused dependencies.
-- [ ] Optimize fonts and images.
-- [ ] Test on slower devices.
+- [x] Measure the initial bundle size.
+- [ ] Lazy-load statistics and settings pages. _Deferred: whole app is about 96 kB gzipped, so splitting was not worth it tonight._
+- [x] Remove unused dependencies.
+- [x] Optimize fonts and images.
+- [ ] Test on slower devices. _Deferred: not tested on slower devices._
 
 ## Phase 22: Release Preparation
 
 ### 86. Complete Privacy Review
 
-- [ ] Confirm that no personal information is collected.
-- [ ] Confirm that practice data remains in the browser.
-- [ ] Remove unnecessary tracking services.
-- [ ] Avoid child-facing advertisements.
-- [ ] Explain that clearing browser data removes progress.
+- [x] Confirm that no personal information is collected.
+- [x] Confirm that practice data remains in the browser.
+- [x] Remove unnecessary tracking services.
+- [x] Avoid child-facing advertisements.
+- [x] Explain that clearing browser data removes progress.
 
 ### 87. Complete Browser Testing
 
-- [ ] Test in Chrome.
-- [ ] Test in Safari.
-- [ ] Test in Firefox.
-- [ ] Test in Microsoft Edge.
-- [ ] Test on an iPad or tablet emulator.
-- [ ] Test on a mobile device or emulator.
+- [ ] Test in Chrome. _To verify on the live site (Gabriella)._
+- [ ] Test in Safari. _Deferred: no Mac/iOS device available tonight._
+- [ ] Test in Firefox. _Deferred: not tested before the deadline._
+- [ ] Test in Microsoft Edge. _To verify on the live site (Gabriella)._
+- [ ] Test on an iPad or tablet emulator. _Deferred: no tablet available tonight._
+- [ ] Test on a mobile device or emulator. _To verify on the live site (Gabriella)._
 
 ### 88. Prepare the Production Build
 
-- [ ] Run all tests.
-- [ ] Resolve linting errors.
-- [ ] Resolve TypeScript errors.
-- [ ] Create the production build.
-- [ ] Test the production build locally.
-- [ ] Configure deployment routing for React Router.
+- [x] Run all tests.
+- [x] Resolve linting errors.
+- [x] Resolve TypeScript errors.
+- [x] Create the production build.
+- [ ] Test the production build locally. _To verify on the live site (Gabriella)._
+- [x] Configure deployment routing for React Router.
 
 ### 89. Deploy the Application
 
-- [ ] Select a hosting service.
-- [ ] Deploy the production build.
-- [ ] Verify every route.
-- [ ] Verify local-storage persistence.
-- [ ] Verify responsive behavior.
-- [ ] Verify that no development errors appear in the console.
+- [x] Select a hosting service.
+- [x] Deploy the production build.
+- [ ] Verify every route. _To verify on the live site (Gabriella)._
+- [ ] Verify local-storage persistence. _To verify on the live site (Gabriella)._
+- [ ] Verify responsive behavior. _To verify on the live site (Gabriella)._
+- [ ] Verify that no development errors appear in the console. _To verify on the live site (Gabriella)._
 
 ## Recommended Development Milestones
 

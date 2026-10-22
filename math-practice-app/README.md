@@ -72,4 +72,20 @@ src/
 └── types/        Shared TypeScript types
 ```
 
-See `TODO.md` for the implementation checklist and progress.
+## Known limitations
+
+- **Browser Back button during a session is not guarded.** The "Leave this practice session?"
+  prompt only appears for the app's own links (nav bar and title). Pressing the browser's Back
+  button leaves without asking. No progress is lost: the session is saved after every answer and
+  shows as "Not finished" in Recent Sessions.
+- **No warning when refreshing or closing the tab.** The app does not use the browser's
+  `beforeunload` "Leave site?" box, because its wording can't be changed and can confuse
+  children. Instead, every answer is saved immediately and a refresh restores the session.
+- **A refresh restores the same card, but unflipped.** The question and progress come back; an
+  answer that was selected but not yet reported is not remembered. Answers are never counted twice.
+- **Refreshing during the short pause after the last answer starts a new session.** The finished
+  session is already saved (it appears in Statistics), but the page does not jump to the summary.
+- **Very long histories:** only the newest 5,000 answers are kept, so overall statistics cover
+  those answers only.
+
+See `TODO.md` for the implementation checklist, progress and deferred items.
