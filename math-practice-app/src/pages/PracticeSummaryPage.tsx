@@ -4,19 +4,7 @@ import { ROUTES } from '../routes'
 import type { PracticeConfig, SessionSummary } from '../types'
 import { DIFFICULTY_LABELS, OPERATION_LABELS } from '../types'
 import { sessionLengthLabel } from '../utils/format'
-
-function isSessionSummary(value: unknown): value is SessionSummary {
-  if (typeof value !== 'object' || value === null) return false
-  const summary = value as Record<string, unknown>
-  return (
-    typeof summary.sessionId === 'string' &&
-    typeof summary.attempted === 'number' &&
-    typeof summary.correct === 'number' &&
-    typeof summary.incorrect === 'number' &&
-    typeof summary.accuracy === 'number' &&
-    Array.isArray(summary.operations)
-  )
-}
+import { isSessionSummary } from '../utils/validation'
 
 function headline(summary: SessionSummary): string {
   if (summary.attempted === 0) return 'Session ended'

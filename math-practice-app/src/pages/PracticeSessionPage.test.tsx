@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
+import { loadAttempts, loadSessions } from '../services/practiceStore'
 import type { PracticeConfig } from '../types'
 import PracticeSessionPage from './PracticeSessionPage'
 import PracticeSetupPage from './PracticeSetupPage'
@@ -91,6 +92,11 @@ describe('PracticeSessionPage', () => {
     expect(tile('Accuracy')).toHaveTextContent('60%')
     expect(screen.getByText('Addition, Division')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Practice Mistakes' })).toBeDisabled()
+
+    // Everything was saved to local storage, so it survives a refresh.
+    expect(loadAttempts()).toHaveLength(5)
+    expect(loadSessions()).toHaveLength(1)
+    expect(loadSessions()[0]).toMatchObject({ attempted: 5, correct: 3, incorrect: 2 })
   }, 20000)
 
   it('continuous practice has no fixed total and ends with confirmation', async () => {

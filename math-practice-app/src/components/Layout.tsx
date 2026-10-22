@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import Header from './Header'
+import StorageWarning from './StorageWarning'
 
 /** Shared frame for every page: header + navigation on top, page content below. */
 function Layout() {
@@ -10,6 +11,7 @@ function Layout() {
       </a>
       <Header />
       <main id="main-content" className="app-main" tabIndex={-1}>
+        <StorageWarning />
         <Outlet />
       </main>
     </div>

@@ -1,10 +1,12 @@
+import { useState } from 'react'
+import { loadSettings } from '../services/practiceStore'
 import type { AppSettings } from '../types'
-import { DEFAULT_SETTINGS } from '../types'
 
 /**
- * Current app settings. Returns the defaults for now; Phase 11 replaces this with
- * settings loaded from (and saved to) local storage.
+ * Current app settings, loaded from local storage (defaults if nothing is saved or the
+ * saved data is invalid). Phase 11 adds editing and live updates.
  */
 export function useSettings(): AppSettings {
-  return DEFAULT_SETTINGS
+  const [settings] = useState(loadSettings)
+  return settings
 }

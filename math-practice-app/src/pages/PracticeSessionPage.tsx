@@ -5,6 +5,7 @@ import ProgressBar from '../components/ProgressBar'
 import QuestionCard, { type CardResult } from '../components/QuestionCard'
 import { useSettings } from '../hooks/useSettings'
 import { ROUTES } from '../routes'
+import { saveAttempt, saveSession } from '../services/practiceStore'
 import { generateQuestionForOperations } from '../services/questionGenerator'
 import type { PracticeAttempt, PracticeConfig, PracticeSession, Question } from '../types'
 import { pickFeedback } from '../utils/feedback'
@@ -61,9 +62,10 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
   const delay = settings.cardAnimation ? TRANSITION_DELAY_MS : TRANSITION_DELAY_NO_ANIMATION_MS
 
   const goToSummary = (finished: PracticeSession) => {
-    navigate(ROUTES.practiceSummary, {
-      state: { summary: summarizeSession(finished), attempts: attemptsRef.current },
-    })
+    const summary = summarizeSession(finished)
+    // Only sessions with at least one answer are worth keeping in history.
+    if (summary.attempted > 0) saveSession(summary)
+    navigate(ROUTES.practiceSummary, { state: { summary, attempts: attemptsRef.current } })
   }
 
   const handleResult = ({ selectedAnswer, selfReportedCorrect }: CardResult) => {
@@ -71,10 +73,9 @@ function PracticeSessionRunner({ config }: { config: PracticeConfig }) {
     if (recordedQuestionIds.current.has(question.id)) return
     recordedQuestionIds.current.add(question.id)
 
-    attemptsRef.current = [
-      ...attemptsRef.current,
-      buildAttempt(session, question, selectedAnswer, selfReportedCorrect),
-    ]
+    const attempt = buildAttempt(session, question, selectedAnswer, selfReportedCorrect)
+    attemptsRef.current = [...attemptsRef.current, attempt]
+    saveAttempt(attempt)
     const updated = recordResult(session, question, selfReportedCorrect)
     const done = isSessionComplete(updated)
     const nextSession = done ? finishSession(updated, 'completed') : updated
