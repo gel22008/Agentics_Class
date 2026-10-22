@@ -23,23 +23,23 @@ npm run dev
 ### 2. Configure Development Tools
 
 - [x] Configure ESLint.
-- [ ] Configure Prettier.
-- [ ] Add scripts for linting and formatting.
-- [ ] Install Vitest.
-- [ ] Install React Testing Library.
-- [ ] Create one basic component test.
+- [x] Configure Prettier.
+- [x] Add scripts for linting and formatting.
+- [x] Install Vitest.
+- [x] Install React Testing Library.
+- [x] Create one basic component test.
 - [ ] Confirm that tests run successfully.
 
 ### 3. Define Shared TypeScript Types
 
-- [ ] Create the MathOperation type.
-- [ ] Create the DifficultyLevel type.
-- [ ] Create the Question interface.
-- [ ] Create the PracticeAttempt interface.
-- [ ] Create the PracticeSession interface.
-- [ ] Create the MistakePattern interface.
-- [ ] Create the statistics interfaces.
-- [ ] Create the application settings interface.
+- [x] Create the MathOperation type.
+- [x] Create the DifficultyLevel type.
+- [x] Create the Question interface.
+- [x] Create the PracticeAttempt interface.
+- [x] Create the PracticeSession interface.
+- [x] Create the MistakePattern interface.
+- [x] Create the statistics interfaces.
+- [x] Create the application settings interface.
 
 Suggested files:
 
@@ -910,5 +910,4 @@ For the fastest path to a working demonstration, implement these tasks first:
 - Add division.
 - Add practice-session totals.
 - Add the session summary.
-This produces a usable prototype before adding routing, persistence, advanced statistics, and personalized mistake review.
-
+  This produces a usable prototype before adding routing, persistence, advanced statistics, and personalized mistake review.
