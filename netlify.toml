@@ -1,0 +1,15 @@
+# Netlify settings for the Math Practice app (the app lives in math-practice-app/).
+[build]
+  base = "math-practice-app"
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Single-page app: send every route (e.g. /statistics) to index.html so refreshing
+# or opening a link directly works instead of showing Netlify's 404 page.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

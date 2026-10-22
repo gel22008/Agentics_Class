@@ -1,73 +1,75 @@
-# React + TypeScript + Vite
+# + Math Practice
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A child-friendly math practice web app for ages 7–12. Kids practice addition, subtraction,
+multiplication and division with flip cards, track their progress, and get extra practice on the
+facts they miss.
 
-Currently, two official plugins are available:
+Built with **React + TypeScript + Vite**. All data is saved in the browser's local storage: no
+account, no server, and no personal information is collected. Clearing your browser data removes
+your progress.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Features
 
-## React Compiler
+- **Practice setup:** pick one or more operations, a difficulty (Beginner, Easy, Intermediate,
+  Advanced) and a session length (5, 10, 20 or continuous).
+- **Flip cards:** four multiple-choice answers (number keys 1–4 work), a Flip Card button, the
+  correct answer and a plain-language explanation on the back, and "I Got It Right / I Got It
+  Wrong" self-reporting with gentle red/green "recheck" nudges.
+- **Session summary:** attempted, correct, incorrect and accuracy.
+- **Statistics:** overall, by operation, by difficulty, most missed operation and number facts,
+  and recent sessions, with Reset Statistics (keeps settings).
+- **Settings:** sound effects, card animation, explanations, encouraging feedback, mastery
+  threshold, practice defaults, and Clear All Application Data.
+- **Mistake review:** missed facts are tracked and practiced with similar questions until mastered.
+- Keyboard accessible, screen-reader labels, reduced-motion support and responsive layout.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Requirements
 
-## Expanding the ESLint configuration
+- [Node.js](https://nodejs.org/) 20 or newer (22 recommended) and npm.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Run locally
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd math-practice-app
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Then open the address it prints (usually http://localhost:5173).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command              | What it does                                          |
+| -------------------- | ----------------------------------------------------- |
+| `npm run dev`        | Start the development server with live reload         |
+| `npm test`           | Run all unit and component tests once (Vitest)        |
+| `npm run test:watch` | Re-run tests automatically when files change          |
+| `npm run lint`       | Check the code with ESLint                            |
+| `npm run format`     | Format the code with Prettier                         |
+| `npm run build`      | Type-check and create the production build in `dist/` |
+| `npm run preview`    | Serve the production build locally to test it         |
+
+## Build and deploy
+
+```bash
+npm run build
+npm run preview   # check the production build at the printed address
 ```
+
+The app is deployed on **Netlify**. The `netlify.toml` file in the repository root tells Netlify to
+build from the `math-practice-app` folder (`npm run build`), publish `dist`, and send every route
+to `index.html` so links like `/statistics` work after a refresh.
+
+## Project structure
+
+```
+src/
+├── components/   Reusable UI (header, nav, flip card, selectors, dialogs, …)
+├── pages/        One component per route (home, setup, session, summary, statistics, settings)
+├── services/     Question generation, answer choices, storage, statistics, mistake tracking
+├── hooks/        Settings context and hooks
+├── utils/        Small helpers (random numbers, difficulty rules, validation, formatting)
+└── types/        Shared TypeScript types
+```
+
+See `TODO.md` for the implementation checklist and progress.
