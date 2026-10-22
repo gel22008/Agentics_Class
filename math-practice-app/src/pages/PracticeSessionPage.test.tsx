@@ -85,7 +85,8 @@ describe('PracticeSessionPage', () => {
       await answerCard(user, results[i])
     }
 
-    expect(await screen.findByRole('heading', { level: 1 }, { timeout: 3000 })).toBeInTheDocument()
+    // Wait for something only the summary page has (the session page also has an h1).
+    expect(await screen.findByText('Attempted', {}, { timeout: 3000 })).toBeInTheDocument()
     const tile = (label: string) => screen.getByText(label).previousElementSibling
     expect(tile('Attempted')).toHaveTextContent('5')
     expect(tile('Correct')).toHaveTextContent('3')
